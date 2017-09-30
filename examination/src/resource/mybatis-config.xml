@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!--<properties resource="database.properties"></properties>
+	-->
+	<typeAliases>
+		<package name="com.lhw.model"/>  <!-- 映射这个包下所有的类 -->
+		<!--<typeAlias type="com.lhw.model.User" alias="User"/>  -->
+	</typeAliases>
+	
+	<!-- 与spring 集成之后,这些可以完全删除,数据库连接的管理交给 spring 去管理 -->
+ 	<!--<environments default="development">
+ 		<environment id="development">
+ 			<transactionManager type="JDBC"></transactionManager>
+ 			<dataSource type="POOLED">
+		      <property name="driver" value="${driver}"/>
+		      <property name="url" value="${url}"/>
+		      <property name="username" value="${username}"/>
+		      <property name="password" value="${password}"/>
+		    </dataSource>
+ 		</environment>
+ 	</environments>
+ 	-->
+ 	<!-- 将mapper文件加入到配置文件中 -->
+ 	<!-- 这里交给sqlSessionFactory 的 mapperLocations属性去得到所有配置信息 -->
+ 	<!--<mappers>
+ 		<mapper resource="com/lhw/registration/model/User.xml"/>
+ 		<mapper class="com.lhw.model.mapper.UserMapper"/>
+ 	</mappers>-->
+
+</configuration>
+
+

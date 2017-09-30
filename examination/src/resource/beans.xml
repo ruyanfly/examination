@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<context:annotation-config/>  
+	<context:component-scan base-package="com.lhw"/> <!-- 扫描com.lhw包下所有写了@Component注解的类实例化 -->
+    <!--<aop:aspectj-autoproxy/>    --><!--解析AOP用到的那些Annotation，用xml方式就不需要这个-->
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    	<property name="locations" value="classpath:database.properties"/>
+	</bean>
+	<bean id="dataSource" destroy-method="close"
+	      class="org.apache.commons.dbcp.BasicDataSource">
+	    <property name="driverClassName" value="${db.driverClassName}"/>
+	    <property name="url" value="${db.url}"/>
+	    <property name="username" value="${db.username}"/>
+	    <property name="password" value="${db.password}"/>
+	</bean>
+    
+    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> 
+	     <!--dataSource属性指定要用到的连接池--> 
+	     <property name="dataSource" ref="dataSource"/> 
+	     <!--configLocation属性指定mybatis的核心配置文件--> 
+	     <property name="configLocation" value="classpath:mybatis-config.xml" /> 
+	     <!-- 所有配置的mapper文件 -->
+	     <property name="mapperLocations" value="classpath*:com/lhw/model/*.xml" />
+    </bean>
+    
+    <!-- 模板类：实现了 SqlSession 接口 -->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+    
+    <!-- XML配置    声明式事务管理开始-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  <property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<aop:config>
+		<aop:pointcut expression="execution(public * com.lhw.registration.service.impl..*.*(..))" id="bussinessService"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="bussinessService"/>
+	</aop:config>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="exists" read-only="true"/>
+			<tx:method name="add*"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- XML配置    声明式事务管理结束-->
+    
+</beans>

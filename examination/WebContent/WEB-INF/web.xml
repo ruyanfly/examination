@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  	 
+  	<listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+        <!-- default: /WEB-INF/applicationContext.xml -->
+    </listener>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:beans.xml</param-value>
+    </context-param>
+    
+<!-- 如果是和Hibernate集成，想要延迟session的关闭可以在此配置OpenSessionInView这个Filter，必须配在Struts2 Filter之前.
+ 默认需要sessionFactory,如果Spring配置文件中没有这个名字的bean，就需要在这里配置sessionFactoryBeanName对应的值是配置文件SessionFactory的名字.
+ 如果拦截的方法没有配置事务边界，OpenSessionInView认为session的事务是只读的。 -->
+     
+     <!-- Struts2.1.8就不需要配置这个Filter了，只要在Struts配置文件配置常量struts.i18n.encoding=GBK就可以了 -->
+     <filter>
+     	<filter-name>encodingFilter</filter-name>
+     	<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+     	<init-param>
+     		<param-name>encoding</param-name>
+     		<param-value>utf-8</param-value>
+     	</init-param>
+     </filter>
+     <filter-mapping>
+     	<filter-name>encodingFilter</filter-name>
+     	<url-pattern>/*</url-pattern>
+     </filter-mapping>
+     
+ 	 <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+</web-app>
